@@ -20,11 +20,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
-    
     - name: Install dependencies
       run: npm install
     
@@ -42,7 +37,7 @@ jobs:
         echo "✓ Build artifacts created successfully"
     
     - name: Verify Python launcher syntax
-      run: python -m py_compile launcher.py
+      run: python3 -m py_compile launcher.py
     
     - name: Build Electron app (on main branch only)
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
