@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-linux:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -48,13 +48,6 @@ jobs:
     - name: Verify Python launcher syntax
       run: python -m py_compile launcher.py
     
-    - name: Build Electron app (Windows)
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      run: npx electron-builder --win --publish never
-      env:
-        ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
-        ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
-    
     - name: Build Electron app (Linux)
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: npx electron-builder --linux --publish never
@@ -62,10 +55,67 @@ jobs:
         ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
         ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
     
-    - name: Upload build artifacts
+    - name: Upload Linux artifacts
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: actions/upload-artifact@v4
       with:
-        name: electron-distributables
+        name: electron-linux
+        path: release/**/*
+        retention-days: 7
+  
+  build-windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+    
+    - name: Install dependencies
+      run: |
+        echo "Installing dependencies..."
+        npm install
+        echo "✓ Dependencies installed"
+    
+    - name: Webpack build
+      run: |
+        echo "Building with webpack..."
+        npx webpack --mode production
+        echo "✓ Webpack build completed"
+    
+    - name: Type check
+      run: |
+        echo "Running TypeScript type check..."
+        npm run type-check
+        echo "✓ Type check passed"
+    
+    - name: Verify build artifacts
+      run: |
+        if (-not (Test-Path "dist")) { exit 1 }
+        if (-not (Test-Path "dist/bundle.js")) { exit 1 }
+        if (-not (Test-Path "dist/index.html")) { exit 1 }
+        echo "✓ Build artifacts created successfully"
+    
+    - name: Verify Python launcher syntax
+      run: python -m py_compile launcher.py
+    
+    - name: Build Electron app (Windows)
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: npx electron-builder --win --publish never
+      env:
+        ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
+        ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
+        CSC_IDENTITY_AUTO_DISCOVERY: false
+    
+    - name: Upload Windows artifacts
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: actions/upload-artifact@v4
+      with:
+        name: electron-windows
         path: release/**/*
         retention-days: 7
