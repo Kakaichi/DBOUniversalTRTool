@@ -27,9 +27,6 @@ Your contributions have made this project possible, and we're grateful for the f
 - 💾 Save RDF or EDF directly as XML
 - 🔐 XML-based XOR key configuration system
 - 🔒 Encrypt/Decrypt files with custom XOR keys
-- 🎨 Modern UI with toast notifications
-- ⚡ Persistent error and warning toasts
-- 🚫 Auto-disable EDF options when config missing
 
 ## Requirements
 
@@ -49,12 +46,8 @@ npm install
 
 ### XOR Key Setup (Required for EDF Encryption/Decryption)
 
-1. **Copy the example config file**:
-   ```bash
-   cp config.example.xml config.xml
-   ```
 
-2. **Edit `config.xml`** and paste your client XOR key in hex format:
+1. **Edit `config.xml`** and paste your client XOR key in hex format:
    ```xml
    <config>
      <description>XOR Key Configuration</description>
@@ -65,7 +58,7 @@ npm install
    </config>
    ```
 
-3. **Save the file** next to the executable (or in project root for development)
+2. **Save the file** in the same folder as the executable
 
 ## Usage
 
@@ -87,15 +80,6 @@ npm run build
 This creates two files in the `release/` folder:
 - **DBO Universal Translation Tool Portable.exe** - Portable version (no installation needed)
 - **DBO Universal Translation Tool Setup.exe** - Windows installer
-
-### What's in the Release?
-
-The executable includes:
-- ✅ No dev bar (clean interface in production)
-- ✅ Auto build versioning
-- ✅ Config.xml bundled for easy setup
-- ✅ Toast notifications for better UX
-- ✅ GPU error suppression for stability
 
 ## Project Structure
 
@@ -128,10 +112,9 @@ DBOUniversalTRTool/
 │   │   └── toast.ts         # Toast notification system
 │   ├── App.css            # Global styles
 │   └── index.tsx          # React entry point
-├── config.example.xml     # Sample XOR key configuration
-├── config.xml             # User's actual XOR key (.gitignored)
+├── config.xml             # User's actual XOR key
 ├── main.js                # Electron main process
-├── launcher.py            # Python launcher script (optional)
+├── launcher.py            # Python launcher script, use it to auto install dependencies and launcher the program
 ├── package.json           # Dependencies and build scripts
 ├── tsconfig.json          # TypeScript configuration
 └── webpack.config.js      # Webpack bundler config
