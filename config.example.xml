@@ -1,0 +1,9 @@
+<config>
+  <description>XOR Key Configuration (Example)</description>
+  <note>Copy this file to config.xml and paste your real XOR key.</note>
+  <xorkey>
+    0x00, 0x00, 0x00, 0x00
+  </xorkey>
+</config>
+
+
