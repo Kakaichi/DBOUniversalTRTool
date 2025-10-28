@@ -1,2 +1,0 @@
-# No external Python dependencies required
-# This file exists only to satisfy GitHub Actions pip cache requirements
