@@ -48,7 +48,14 @@ jobs:
     - name: Verify Python launcher syntax
       run: python -m py_compile launcher.py
     
-    - name: Build Electron app (on main branch only)
+    - name: Build Electron app (Windows)
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: npx electron-builder --win --publish never
+      env:
+        ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
+        ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
+    
+    - name: Build Electron app (Linux)
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: npx electron-builder --linux --publish never
       env:
