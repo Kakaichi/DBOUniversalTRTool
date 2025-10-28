@@ -67,8 +67,6 @@ npm install
 
 3. **Save the file** next to the executable (or in project root for development)
 
-⚠️ **Important**: Never commit `config.xml` to version control - it contains sensitive encryption keys!
-
 ## Usage
 
 ### Option 1: Using Python Launcher
