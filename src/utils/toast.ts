@@ -24,7 +24,7 @@ export const toast = {
       defaultDuration = duration;
     } else {
       // Error and warning toasts are persistent by default
-      defaultDuration = (type === 'error' || type === 'warning') ? 0 : 3000;
+      defaultDuration = (type === 'error' || type === 'warning') ? 0 : 5000;
     }
     
     const newToast: Toast = { id, message, type, duration: defaultDuration };
