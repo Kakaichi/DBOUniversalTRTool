@@ -1,6 +1,6 @@
 {
   "name": "dbo-universal-translation-tool",
-  "version": "1.0.226",
+  "version": "1.0.227",
   "description": "DBO Universal Translation Tool",
   "main": "main.js",
   "scripts": {
