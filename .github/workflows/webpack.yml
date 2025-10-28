@@ -3,20 +3,20 @@ run-name: DBO UTT v${{ inputs.version || 'manual' }} • ${{ github.ref_name }}
 
 on:
   workflow_dispatch:
+    inputs:
       version:
         description: App version to display in run name (e.g., 1.0.227)
         required: false
         type: string
-    inputs:
       build_linux:
         description: "Build Linux artifacts"
         required: false
-        default: "false"
+        default: false
         type: boolean
       build_windows:
         description: "Build Windows artifacts"
         required: false
-        default: "false"
+        default: true
         type: boolean
 
 jobs:
