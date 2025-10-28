@@ -21,13 +21,22 @@ jobs:
         node-version: ${{ matrix.node-version }}
     
     - name: Install dependencies
-      run: npm install
+      run: |
+        echo "Installing dependencies..."
+        npm install
+        echo "✓ Dependencies installed"
     
     - name: Webpack build
-      run: npx webpack --mode production
+      run: |
+        echo "Building with webpack..."
+        npx webpack --mode production
+        echo "✓ Webpack build completed"
     
     - name: Type check
-      run: npm run type-check
+      run: |
+        echo "Running TypeScript type check..."
+        npm run type-check
+        echo "✓ Type check passed"
     
     - name: Verify build artifacts
       run: |
@@ -37,7 +46,7 @@ jobs:
         echo "✓ Build artifacts created successfully"
     
     - name: Verify Python launcher syntax
-      run: python3 -m py_compile launcher.py
+      run: python -m py_compile launcher.py
     
     - name: Build Electron app (on main branch only)
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
