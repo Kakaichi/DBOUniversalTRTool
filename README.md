@@ -21,10 +21,15 @@ Your contributions have made this project possible, and we're grateful for the f
 - ⚛️  React 18 with TypeScript
 - 🖥️  Electron 27
 - 🛠️  Webpack + Babel bundling
-- 📄 RDF/XML Parser for Dragon Ball Online Translation Files
-- 🔁 Convert RDF ↔️ XML for Quest and Text tables
-- ✏️  Edit translations
+- 📄 RDF/XML/EDF Parser for Dragon Ball Online Translation Files
+- 🔁 Convert RDF ↔️ XML ↔️ EDF for Quest and Text tables
+- ✏️  Edit translations with search and pagination
 - 💾 Save RDF or EDF directly as XML
+- 🔐 XML-based XOR key configuration system
+- 🔒 Encrypt/Decrypt files with custom XOR keys
+- 🎨 Modern UI with toast notifications
+- ⚡ Persistent error and warning toasts
+- 🚫 Auto-disable EDF options when config missing
 
 ## Requirements
 
@@ -34,11 +39,35 @@ Your contributions have made this project possible, and we're grateful for the f
 
 ## Installation
 
-Inside your project folder, after installing all requirements, use the follwing commands
+Inside your project folder, after installing all requirements, use the following commands:
 
 ```bash
 npm install
 ```
+
+## Configuration
+
+### XOR Key Setup (Required for EDF Encryption/Decryption)
+
+1. **Copy the example config file**:
+   ```bash
+   cp config.example.xml config.xml
+   ```
+
+2. **Edit `config.xml`** and paste your client XOR key in hex format:
+   ```xml
+   <config>
+     <description>XOR Key Configuration</description>
+     <note>Paste your Client XOR Key here</note>
+     <xorkey>
+     0x77, 0x9b, 0xd0, 0x74, 0xfb, 0x00, 0x49, 0xb4, ...
+     </xorkey>
+   </config>
+   ```
+
+3. **Save the file** next to the executable (or in project root for development)
+
+⚠️ **Important**: Never commit `config.xml` to version control - it contains sensitive encryption keys!
 
 ## Usage
 
@@ -54,55 +83,65 @@ npm start
 
 ### Building Windows Executable (.exe)
 ```bash
-npm run build-exe
+npm run build
 ```
 
 This creates two files in the `release/` folder:
 - **DBO Universal Translation Tool Portable.exe** - Portable version (no installation needed)
 - **DBO Universal Translation Tool Setup.exe** - Windows installer
 
-The executable has the difference of:
-- ✅ No dev bar (clean interface)
+### What's in the Release?
+
+The executable includes:
+- ✅ No dev bar (clean interface in production)
 - ✅ Auto build versioning
+- ✅ Config.xml bundled for easy setup
+- ✅ Toast notifications for better UX
+- ✅ GPU error suppression for stability
 
 ## Project Structure
 
 ```
-DBOTWCrypt-Python/
-├── dist/             # Build output
-├── EDF/              # Sample EDF files
-├── RDF/              # Sample RDF files
-├── XML/              # Sample XML files
-├── public/           # Static files (HTML template)
-├── release/          # Compiled executables (gitignored)
-├── scripts/          # Build scripts
+DBOUniversalTRTool/
+├── dist/                  # Webpack build output
+├── EDF/                   # Sample EDF encrypted files
+├── RDF/                   # Sample RDF unencrypted files
+├── XML/                   # Sample XML editable files
+├── public/                # Static files (HTML template)
+├── release/               # Compiled executables (.gitignored)
+├── scripts/               # Build scripts
 │   └── increment-version.js  # Auto-increment version on build
-├── src/              # Source code
-│   ├── components/   # React components
-│   │   ├── App.tsx          # Main app component
-│   │   ├── ConverterTab.tsx # File converter UI
-│   │   └── EditorTab.tsx    # Text editor UI
-│   ├── hooks/        # Custom React hooks
+├── src/                   # Source code
+│   ├── components/        # React components
+│   │   ├── App.tsx            # Main app component
+│   │   ├── ConverterTab.tsx   # File converter UI
+│   │   ├── EditorTab.tsx      # Text editor UI
+│   │   └── ToastContainer.tsx # Toast notification UI
+│   ├── hooks/             # Custom React hooks
 │   │   ├── useFileConversion.ts  # File conversion logic
 │   │   ├── useFileHandling.ts    # File selection & type detection
 │   │   ├── useLogging.ts         # Log management
-│   │   └── useTextEditor.ts      # Text editor state
-│   ├── types/        # TypeScript type definitions
+│   │   └── useTextEditor.ts      # Text editor state management
+│   ├── types/             # TypeScript type definitions
 │   │   └── index.ts
-│   ├── utils/        # Utility functions
-│   │   └── rdfParser.ts  # RDF/XML/EDF parser
-│   ├── App.css       # Global styles
-│   └── index.tsx     # React entry point
-├── main.js          # Electron main process
-├── launcher.py      # Python launcher script
-├── package.json     # Dependencies and scripts
-├── tsconfig.json    # TypeScript configuration
-└── webpack.config.js # Webpack bundler config
+│   ├── utils/             # Utility functions
+│   │   ├── configLoader.ts  # Config.xml loader
+│   │   ├── rdfParser.ts     # RDF/XML/EDF parser & XOR encryption
+│   │   └── toast.ts         # Toast notification system
+│   ├── App.css            # Global styles
+│   └── index.tsx          # React entry point
+├── config.example.xml     # Sample XOR key configuration
+├── config.xml             # User's actual XOR key (.gitignored)
+├── main.js                # Electron main process
+├── launcher.py            # Python launcher script (optional)
+├── package.json           # Dependencies and build scripts
+├── tsconfig.json          # TypeScript configuration
+└── webpack.config.js      # Webpack bundler config
 ```
 
 ## Technologies
 
-- Electron, React, TypeScript, NodeJs, Webpack, Babel
+- Electron, React, TypeScript, Node.js, Webpack, Babel
 
 ## License
 
