@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../App.css';
 import { useLogging } from '../hooks/useLogging';
 import { useFileHandling } from '../hooks/useFileHandling';
@@ -15,11 +15,32 @@ import { faFolderOpen, faSync, faEdit, faExclamationTriangle, faFileAlt, faTimes
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('converter');
   const [configLoaded, setConfigLoaded] = useState<boolean>(false);
+  const didCheckConfigRef = useRef<boolean>(false);
   
   // Check config status on mount
   useEffect(() => {
-    setTimeout(() => {
-      const config = (window as any).__config;
+    if (didCheckConfigRef.current) {
+      return;
+    }
+    didCheckConfigRef.current = true;
+    setTimeout(async () => {
+      let config = (window as any).__config;
+      if (!config) {
+        try {
+          // Web-mode fallback: try to fetch config.xml and parse <xorkey>
+          const res = await fetch('config.xml', { cache: 'no-store' });
+          if (res.ok) {
+            const text = await res.text();
+            const match = text.match(/<xorkey>\s*([^<]+)\s*<\/xorkey>/i);
+            if (match) {
+              const xorKeyArray = match[1].split(',').map(s => parseInt(s.trim(), 16));
+              config = { xorKey: xorKeyArray };
+              (window as any).__config = config;
+            }
+          }
+        } catch {}
+      }
+
       if (config) {
         setConfigLoaded(true);
         toast.success('Config.xml loaded successfully, ensure that your xor key is compatible with the client if you use .edf files.');

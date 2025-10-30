@@ -1,5 +1,6 @@
-// Config loader - loads config from the main process
-// The main process loads config.xml and exposes it via window.__config
+// Config loader
+// Electron: main process injects window.__config
+// Web: fetch config.xml and parse <xorkey> into an array
 
 let configCache: any = null;
 
@@ -9,20 +10,41 @@ export function loadConfig(): any {
     return configCache;
   }
   
-  // Wait for config to be injected by main process
-  // Check if config was provided by main process
-  const config = (window as any).__config;
-  
-  console.log('loadConfig called. window.__config:', config);
-  
-  if (config) {
-    console.log('Loaded config from main process with keys:', Object.keys(config));
-    configCache = config;
+  const injected = (window as any).__config;
+  if (injected) {
+    configCache = injected;
     return configCache;
-  } else {
-    // Config not found
-    console.error('Config not loaded by main process. window.__config is:', config);
-    throw new Error('config.xml could not be loaded by the main process');
+  }
+
+  // Browser fallback: try to GET /config.xml and parse the xorkey list
+  throwIfDOMUnavailable();
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', 'config.xml', false);
+  try {
+    xhr.send(null);
+  } catch (e) {
+    console.error('Failed to request config.xml:', e);
+  }
+
+  if (xhr.status >= 200 && xhr.status < 300 && xhr.responseText) {
+    const raw = xhr.responseText;
+    const match = raw.match(/<xorkey>\s*([^<]+)\s*<\/xorkey>/i);
+    if (match) {
+      const hexString = match[1].trim();
+      const xorKeyArray = hexString.split(',').map((h) => parseInt(h.trim(), 16));
+      configCache = { xorKey: xorKeyArray };
+      (window as any).__config = configCache;
+      return configCache;
+    }
+  }
+
+  console.error('config.xml is required but could not be loaded');
+  throw new Error('config.xml is required but could not be loaded');
+}
+
+function throwIfDOMUnavailable(): void {
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    throw new Error('DOM not available');
   }
 }
 

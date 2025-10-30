@@ -62,7 +62,10 @@ npm install
 
 ## Usage
 
-### Option 1: Using Python Launcher
+You can run the application in 3 ways. Third option is a proof of concept that application supports to be hosted in a website.
+
+
+### Option 1: Using Python Launcher, it will install all dependences and run Electron application
 ```bash
 python launcher.py
 ```
@@ -70,6 +73,11 @@ python launcher.py
 ### Option 2: Direct Launch
 ```bash
 npm start
+```
+
+### Option 3: Webserver mode (Browser mode)
+```bash
+npm run webserver
 ```
 
 ### Building Windows Executable (.exe)
@@ -86,10 +94,8 @@ This creates two files in the `release/` folder:
 ```
 DBOUniversalTRTool/
 ├── dist/                  # Webpack build output
-├── EDF/                   # Sample EDF encrypted files
-├── RDF/                   # Sample RDF unencrypted files
-├── XML/                   # Sample XML editable files
 ├── public/                # Static files (HTML template)
+│   └── index.html         # Contains relaxed CSP for dev web mode
 ├── release/               # Compiled executables (.gitignored)
 ├── scripts/               # Build scripts
 │   └── increment-version.js  # Auto-increment version on build
@@ -119,6 +125,11 @@ DBOUniversalTRTool/
 ├── tsconfig.json          # TypeScript configuration
 └── webpack.config.js      # Webpack bundler config
 ```
+
+Notes for Browser (web) mode:
+- Use `npm run webserver` to start the dev server.
+- The app requests `/config.xml`. In web mode, webpack copies `config.xml` from the project root into the served bundle and watches it. Editing the root `config.xml` is picked up automatically; refresh the page (Ctrl+F5) to reload, recommended restart the Webserver.
+- CSP in `public/index.html` allows localhost connections during nom run webserver mode.
 
 ## Technologies
 
